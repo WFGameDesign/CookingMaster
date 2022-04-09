@@ -15,6 +15,9 @@ public class CharacterMovement : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
     private Vector3 rotVelocity = Vector3.zero;
 
+    //bool used to freeze character movement
+    private bool freezeMov = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,13 +27,17 @@ public class CharacterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //for testing player movement velocity
-        //print(rgbRef.velocity.magnitude);
+
     }
 
     //movement behavior to be called from CharacterController
     public void Move(float fAxis, float rAxis)
     {
+        // if movement frozen return immediatley 
+        if(freezeMov)
+        {
+            return;
+        }
 
         //determine the direction of movement
         //vector is normalized so speed is uniform when moving diagonally, horizontally, or orthogonally relative to the viewing plane
@@ -57,5 +64,35 @@ public class CharacterMovement : MonoBehaviour
         //apply target rotation 
         //rgbRef.transform.forward = targetForwardRotation;
         rgbRef.transform.forward = Vector3.SmoothDamp(rgbRef.transform.forward, targetForwardVect, ref rotVelocity, rotSpeed);
+    }
+
+    //for locking player movement when at the cutting board
+    public void lockPlayerMovement()
+    {
+        //set bool so move() does not move player
+        freezeMov = true;
+
+        //cancel velocity
+        rgbRef.velocity = Vector3.zero;
+
+        //lock position and rotation
+        rgbRef.constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+
+        //set character controller to ignore all input to stop
+        //player from picking up other items while frozen
+        GetComponent<CharacterInputController>().setIgnoreInput(true);
+    }
+
+    //for unlocking player movement when the player is done on the cutting board
+    public void unlockPlayerMovement()
+    {
+        //set bool so move() does not move player
+        freezeMov = false;
+
+        //lock position and rotation
+        rgbRef.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+        //set character controller to stop ignoring all input
+        GetComponent<CharacterInputController>().setIgnoreInput(false);
     }
 }

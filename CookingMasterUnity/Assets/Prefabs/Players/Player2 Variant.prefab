@@ -64,6 +64,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6633557397905027494, guid: 6dce026006e47f646838a6056e76a943,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6633557397905027494, guid: 6dce026006e47f646838a6056e76a943,
+        type: 3}
       propertyPath: rightAxis
       value: P2Right
       objectReference: {fileID: 0}

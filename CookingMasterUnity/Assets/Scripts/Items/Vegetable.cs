@@ -14,14 +14,24 @@ public class Vegetable : ItemBase
     [SerializeField] private int veggieIndex;
 
     // Start is called before the first frame update
-    override protected void Start()
+    override protected void Awake()
     {
-        base.Start();
+        base.Awake();
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public int getVegIndex()
+    {
+        return veggieIndex;
+    }
+
+    public override void destroyItem()
+    {
+        base.destroyItem();
     }
 }

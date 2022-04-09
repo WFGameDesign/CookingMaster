@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharcterController : MonoBehaviour
+public class CharacterInputController : MonoBehaviour
 {
     //string names for the input axis used
     //values are set in editor so that each player can use same controller script
@@ -28,6 +28,9 @@ public class CharcterController : MonoBehaviour
     //to be set as part of prefab
     [SerializeField] private CharacterPickup pickupRef;
 
+    //bool used when ignoring player input
+    private bool ignoreInput;
+
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +51,12 @@ public class CharcterController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //if input ignored return
+        if(ignoreInput)
+        {
+            return;
+        }
+
         //call to move function with input axis variables
         movRef.Move(forwardMove, rightMove);
 
@@ -63,5 +72,10 @@ public class CharcterController : MonoBehaviour
             //reset isPickupHeld when button is let go
             isPickupHeld = false;
         }
+    }
+
+    public void setIgnoreInput(bool doIgnore)
+    {
+        ignoreInput = doIgnore;
     }
 }
