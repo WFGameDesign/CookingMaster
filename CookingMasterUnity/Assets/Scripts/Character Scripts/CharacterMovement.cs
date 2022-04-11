@@ -18,10 +18,18 @@ public class CharacterMovement : MonoBehaviour
     //bool used to freeze character movement
     private bool freezeMov = false;
 
+    //power up speed variables
+    [SerializeField] private float boostedSpeed;
+    private float normalSpeedHolder;               //holds normal speed for end of speed up power up
+    Coroutine  boostTimer;
+    [SerializeField] private float boostTime;
+    private bool isBoosted;
+
     // Start is called before the first frame update
     void Start()
     {
         rgbRef = GetComponent<Rigidbody>();
+        normalSpeedHolder = moveSpeed;
     }
 
     // Update is called once per frame
@@ -94,5 +102,28 @@ public class CharacterMovement : MonoBehaviour
 
         //set character controller to stop ignoring all input
         GetComponent<CharacterInputController>().setIgnoreInput(false);
+    }
+
+    public void boostSpeed()
+    {
+        if(isBoosted)
+        {
+            StopCoroutine(boostTimer);
+            
+        }
+
+        boostTimer = StartCoroutine(runningBoostTimer(boostTime));
+    }
+
+    IEnumerator runningBoostTimer(float timer)
+    {
+        isBoosted = true;
+        moveSpeed = boostedSpeed;
+
+        yield return new WaitForSeconds(timer);
+
+        moveSpeed = normalSpeedHolder;
+        isBoosted = false;
+        
     }
 }

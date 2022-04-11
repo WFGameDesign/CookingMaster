@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CuttingBoard : ItemHolderBase
 {
@@ -16,6 +17,12 @@ public class CuttingBoard : ItemHolderBase
     //reference for any placed choppedVegetables
     [SerializeField]private ChoppedVegetable chopRef;
 
+    [SerializeField] private Image progressFill;
+    [SerializeField] private GameObject fillBarRoot;
+
+    //things on plate till be added to chopped vegetable mix
+    [SerializeField] private Plate plateRef;
+
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +37,9 @@ public class CuttingBoard : ItemHolderBase
         {
             activeChopTimer -= Time.deltaTime;
 
+            //update progress bar
+            progressFill.fillAmount = activeChopTimer / chopTimerMax;
+
             //check if timer has run out
             if (activeChopTimer <= 0)
             {
@@ -37,8 +47,12 @@ public class CuttingBoard : ItemHolderBase
                 //place behavior for when player is done chopping here
                 activePlayerMov.unlockPlayerMovement();
 
+                //hider progress bar
+                hideProgressBar();
+
                 //clear referenc to CharacterMovment Component
                 activePlayerMov = null;
+
 
                 //check if placed object is a vegetable and that there is no chopped vegetables 
                 //already on the cuttoing board
@@ -49,7 +63,7 @@ public class CuttingBoard : ItemHolderBase
 
                     //get reference to ChoppedVegetable and to currently held vegetable
                     ChoppedVegetable cHolder = instHolder.gameObject.GetComponent<ChoppedVegetable>();
-                    Vegetable vHolder = spawnedItem.gameObject.GetComponent<Vegetable>();
+                    Vegetable vHolder = placedItem.gameObject.GetComponent<Vegetable>();
 
                     if(cHolder != null && vHolder != null)
                     {
@@ -62,13 +76,13 @@ public class CuttingBoard : ItemHolderBase
                         //move vegetable to its own designated reference holder and clear placed
                         //item variable
                         chopRef = cHolder;
-                        spawnedItem = null;
+                        placedItem = null;
                     }
 
 
                 }else if(chopRef != null)
                 {
-                    chopRef.addVegToMix(spawnedItem.gameObject);
+                    chopRef.addVegToMix(placedItem.gameObject);
                 }
             }
         }
@@ -95,6 +109,7 @@ public class CuttingBoard : ItemHolderBase
         else if(chopRef == null)
         {
             chopRef = cVChecker;
+            placedItem = null;
         }
         else
         {
@@ -106,14 +121,18 @@ public class CuttingBoard : ItemHolderBase
 
     private void startChopTimer()
     {
+        //set timer and start countdown
         isTimerActive = true;
         activeChopTimer = chopTimerMax;
+
+        //make progress bar visible
+        showProgressBar();
     }
 
     // check if placed item is a vegetable
     private bool vegetableCheck()
     {
-        Vegetable vHolder = spawnedItem.GetComponent<Vegetable>();
+        Vegetable vHolder = placedItem.GetComponent<Vegetable>();
 
         bool isVeggie = false;
 
@@ -141,5 +160,32 @@ public class CuttingBoard : ItemHolderBase
     public void clearChopRef()
     {
         chopRef = null;
+    }
+
+    private void hideProgressBar()
+    {
+        fillBarRoot.SetActive(false);
+    }
+
+    private void showProgressBar()
+    {
+        fillBarRoot.SetActive(true);
+    }
+
+    public void grabFromPlate()
+    {
+        if(plateRef == null)
+        {
+            return;
+        }
+
+        ItemBase newItemHolder = plateRef.giveItem();
+
+        if (newItemHolder != null)
+        {
+            newItemHolder.removeSelfFromHolder();
+
+            chopRef.addVegToMix(newItemHolder.gameObject);
+        }
     }
 }

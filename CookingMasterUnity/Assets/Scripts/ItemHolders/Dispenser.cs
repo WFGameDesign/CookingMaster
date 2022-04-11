@@ -21,7 +21,6 @@ public class Dispenser : ItemHolderBase
 
     public override void itemRemovedNotify()
     {
-        print(1);
         StartCoroutine(timedRespawn(timeToDispenseNew));
     }
 

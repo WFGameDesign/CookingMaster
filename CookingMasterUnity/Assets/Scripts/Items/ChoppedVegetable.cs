@@ -14,7 +14,9 @@ public class ChoppedVegetable : ItemBase
     //4 = Radish
     //5 = Asparagus
     //index values are matched up to values in Vegetable "veggieIndex" variable
-    [SerializeField] private int[] veggieMixArr = new int[6]; 
+    [SerializeField] private int[] veggieMixArr = new int[6];
+
+    [SerializeField] private VegetableReadout ingredientUI;
 
     // Start is called before the first frame update
     override protected void Awake()
@@ -54,9 +56,10 @@ public class ChoppedVegetable : ItemBase
 
         //destroy vegetable
         newVeg.destroyItem();
-    }
 
-    
+        //set readout
+        ingredientUI.setReadout(veggieMixArr);
+    }
 
     public void addVegToMix(ChoppedVegetable newChop)
     {
@@ -68,6 +71,9 @@ public class ChoppedVegetable : ItemBase
 
         //destroy newChop
         newChop.destroyItem();
+
+        //set readout
+        ingredientUI.setReadout(veggieMixArr);
     }
 
     public void addVegToMix(GameObject newThing)
@@ -95,13 +101,19 @@ public class ChoppedVegetable : ItemBase
         {
             CuttingBoard cBHolder = iHolderRef.gameObject.GetComponent<CuttingBoard>();
 
+            //if the holder this object is being lifted from is a cutting board
             if (cBHolder != null)
             {
-                hasBeenPlaced(false);
+
+                //put plate bahavior here
+                cBHolder.grabFromPlate();
+
+                hasBeenPlaced(false);                
+
                 cBHolder.clearChopRef();
             }
         }
-
+        
         base.removeSelfFromHolder();
     }
 }

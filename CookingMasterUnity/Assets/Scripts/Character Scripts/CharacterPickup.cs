@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterPickup : MonoBehaviour
 {
@@ -25,6 +26,12 @@ public class CharacterPickup : MonoBehaviour
     //reference to CharacterController
     [SerializeField] private CharacterMovement charMovRef;
 
+    //held item ui elements
+    [SerializeField] private Image[] heldItemIcons;
+    [SerializeField] private Image[] pocketItemIcons;
+    [SerializeField] private GameObject heldItemUIRoot;
+    [SerializeField] private GameObject pocketItemUIRoot;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,7 +41,7 @@ public class CharacterPickup : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        setHeldItemUI();
     }
 
     public void Pickup()
@@ -260,12 +267,23 @@ public class CharacterPickup : MonoBehaviour
         //local reference to helditem because the heldItem refernce will be cleared next
         ItemBase itemTemp = heldItem;
 
+
+        //switched line with placeItem() and dropHeldItem() because a logic issue
+        //making note incase anything goes wrong with pickup script
+        //in that case look here for issues first
+        //so far seems to be fine
+
+
+
         //drop item from player
         dropHeldItem();
 
         //place item on item Holder using local variable
         activeHolder.placeItem(itemTemp, charMovRef);
-       
+
+
+
+
     }
 
     //returns true if item is a ChoppedVegetable item that is on a CuttingBoard
@@ -281,5 +299,51 @@ public class CharacterPickup : MonoBehaviour
         }
 
         return doMix;
+    }
+
+    //ui update
+    private void setHeldItemUI()
+    {
+        if (heldItem != null)
+        {
+            heldItemUIRoot.SetActive(true);
+            for (int i = 0; i < heldItemIcons.Length; i++)
+            {
+                heldItemIcons[i].gameObject.SetActive(false);
+            }
+
+            Vegetable vHolder = heldItem.GetComponent<Vegetable>();
+            if (vHolder)
+            {
+                heldItemIcons[vHolder.getVegIndex()].gameObject.SetActive(true);
+            }
+            else
+            {
+                heldItemUIRoot.SetActive(false);
+            }
+        }
+        else
+        {
+            heldItemUIRoot.SetActive(false);
+        }
+
+        if (pocketItem != null)
+        {
+            pocketItemUIRoot.SetActive(true);
+            for (int i = 0; i < pocketItemIcons.Length; i++)
+            {
+                pocketItemIcons[i].gameObject.SetActive(false);
+            }
+
+            Vegetable vHolder = pocketItem.GetComponent<Vegetable>();
+            if (vHolder)
+            {
+                pocketItemIcons[vHolder.getVegIndex()].gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            pocketItemUIRoot.SetActive(false);
+        }
     }
 }

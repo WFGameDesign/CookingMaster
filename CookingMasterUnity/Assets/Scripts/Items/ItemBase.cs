@@ -99,7 +99,12 @@ public class ItemBase : MonoBehaviour
         //then destroy self
         //playerPickup script will clear its own references 
         //whenever necessary
-        iHolderRef.clearPlacedItem();
+
+        if (iHolderRef != null)
+        {
+            iHolderRef.clearPlacedItem();
+        }
+
         Destroy(this.gameObject);
     }
 }

@@ -10,7 +10,7 @@ public class ItemHolderBase : MonoBehaviour
     [SerializeField] protected Transform placedItemAnchor;
 
     //refrence to placed item
-    [SerializeField]protected ItemBase spawnedItem;
+    [SerializeField]protected ItemBase placedItem;
 
     //multiple derived classes can spawn objects so that reference is in the base class
     [SerializeField] protected ItemBase Spawnable;
@@ -35,23 +35,23 @@ public class ItemHolderBase : MonoBehaviour
         {
 
             //save reference to Item
-            spawnedItem = newItem;
+            placedItem = newItem;
 
             //place at anchor
-            spawnedItem.transform.position = placedItemAnchor.position;
+            placedItem.transform.position = placedItemAnchor.position;
 
             //parent to anchor
-            spawnedItem.transform.parent = placedItemAnchor;
+            placedItem.transform.parent = placedItemAnchor;
 
             //lock item position
-            spawnedItem.lockToPosition();
+            placedItem.lockToPosition();
 
             //set booleans for if item is held by player or placed on holder
-            spawnedItem.hasBeenPlaced(true);
-            spawnedItem.hasBeenPickedUp(false);
+            placedItem.hasBeenPlaced(true);
+            placedItem.hasBeenPickedUp(false);
 
             //set item holder internal reference variable
-            spawnedItem.setNewItemHolder(this);
+            placedItem.setNewItemHolder(this);
         }
         
     }
@@ -67,7 +67,7 @@ public class ItemHolderBase : MonoBehaviour
         bool itemPlacedFlag = false;
 
         //if an item is placed switch flag to true
-        if (spawnedItem != null)
+        if (placedItem != null)
         {
             itemPlacedFlag = true;
         }
@@ -78,7 +78,7 @@ public class ItemHolderBase : MonoBehaviour
 
     virtual public void clearPlacedItem()
     {
-        spawnedItem = null;
+        placedItem = null;
 
     }
 
@@ -91,7 +91,7 @@ public class ItemHolderBase : MonoBehaviour
 
     virtual protected void placeOnSelf(ItemBase itemToPlace)
     {
-        spawnedItem = itemToPlace;
+        placedItem = itemToPlace;
 
     }
 
@@ -99,5 +99,10 @@ public class ItemHolderBase : MonoBehaviour
     virtual public void itemRemovedNotify()
     {
 
+    }
+
+    virtual public ItemBase giveItem()
+    {
+        return placedItem;
     }
 }
